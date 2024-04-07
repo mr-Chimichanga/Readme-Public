@@ -1,0 +1,282 @@
+{
+	"info": {
+		"_postman_id": "9c5b519a-cb6c-45e9-ab22-d6338fb380ec",
+		"name": "СКАН-Интерфакс",
+		"description": "Реальный кейс от компании SKAN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32634287"
+	},
+	"item": [
+		{
+			"name": "Авторизация пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Запись сохранения токена\", function()\r",
+							"{let jsonData = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"auth_key\", jsonData.accessToken);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{test_login}}\",\r\n  \"password\": \"{{test_password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/account/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Баланс пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Текущее значение баланса\", function()\r",
+							"{let jsonData = JSON.parse(responseBody)\r",
+							"pm.collectionVariables.set(\"current_balance\", jsonData.balance);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/account/balance",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"account",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Темы публикаций",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Темы публикаций\", function() {\r",
+							"  let jsonData = pm.response.json();\r",
+							"  pm.collectionVariables.set(\"subjects_name1\", jsonData.subjects[0].name);\r",
+							"  pm.collectionVariables.set(\"subjects_name2\", jsonData.subjects[1].name);\r",
+							"  pm.collectionVariables.set(\"subjects_name3\", jsonData.subjects[2].name);\r",
+							"  pm.collectionVariables.set(\"subjects_total\", jsonData.totalCount);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/v1/entities/subjects?index=0&pageSize=3",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"entities",
+						"subjects"
+					],
+					"query": [
+						{
+							"key": "index",
+							"value": "0"
+						},
+						{
+							"key": "pageSize",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение документов в формате \"SсanDoc\"",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Новостные агенства\", function() {\r",
+							"  let jsonData = pm.response.json();\r",
+							"  pm.collectionVariables.set(\"news_agent_1\", jsonData[0].ok.source.name);\r",
+							"  pm.collectionVariables.set(\"news_agent_2\", jsonData[1].ok.source.name);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"ids\": [ \r\n    {{id1}},\r\n    {{id2}}\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/v1/documents",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{auth_key}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Status code is 200\", function () {",
+					"    pm.response.to.have.status(200);",
+					"});",
+					"",
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "test_login",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_password",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "https://gateway.scan-interfax.ru",
+			"type": "string"
+		},
+		{
+			"key": "current_balance",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "auth_key",
+			"value": ""
+		},
+		{
+			"key": "subjects_name1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_name2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_name3",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjects_total",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "news_agent_1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "news_agent_2",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "id1",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "id2",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
